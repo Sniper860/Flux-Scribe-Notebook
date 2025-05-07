@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flux Scribe Notebook (Firebase)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script type="module">
+      // IMPORTANT: Replace the following with your app's Firebase project configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      const firebaseConfig = {
+      apiKey: "AIzaSyAY3ODjMfF62CiiWYV90ndSv7EaEzm1U2g",
+      authDomain: "snippetsaver-1136b.firebaseapp.com",
+      projectId: "snippetsaver-1136b",
+      storageBucket: "snippetsaver-1136b.firebasestorage.app",
+      messagingSenderId: "616307570898",
+      appId: "1:616307570898:web:63679fcd1472efaf1b550b",
+      measurementId: "G-4VJ6G94VGZ"
+    };
+      // Initialize Firebase (this will be done in script.js)
+      // import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+      // const app = initializeApp(firebaseConfig);
+    </script>
+    </head>
+<body class="bg-slate-100 font-inter text-slate-800 flex flex-col h-screen overflow-hidden">
+
+    <div id="introOverlay" class="fixed inset-0 bg-slate-800 flex flex-col items-center justify-center z-[100] transition-opacity duration-1000 ease-in-out">
+        <svg id="introLogo" class="w-24 h-24 text-sky-400 mb-6 opacity-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.25278C12 6.25278 5.66381 3.74988 3.5 4.99988C1.33619 6.24988 1.33619 11.2511 3.5 12.5011C5.66381 13.7511 12 17.7501 12 17.7501M12 6.25278C12 6.25278 18.3362 3.74988 20.5 4.99988C22.6638 6.24988 22.6638 11.2511 20.5 12.5011C18.3362 13.7511 12 17.7501 12 17.7501M12 6.25278V17.7501"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.5 12.5011C3.5 12.5011 5.66381 15.004 12 17.7501M20.5 12.5011C20.5 12.5011 18.3362 15.004 12 17.7501"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 21.75V17.75"></path></svg>
+        <h1 id="introTitle" class="text-4xl font-bold text-slate-100 opacity-0">Flux Scribe Notebook</h1>
+    </div>
+
+    <div id="authScreen" class="fixed inset-0 bg-slate-200 flex items-center justify-center z-50 p-4 hidden">
+        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-sm">
+            <div class="flex justify-center mb-6">
+                 <i class="ph ph-hexagon text-sky-500 text-5xl"></i>
+            </div>
+            <h2 id="authTitle" class="text-2xl font-semibold text-center text-slate-700 mb-6">Login to Flux Scribe</h2>
+            
+            <div id="authFormContainer">
+                <form id="loginForm" class="space-y-4">
+                    <div>
+                        <label for="loginEmail" class="block text-sm font-medium text-slate-600">Email</label>
+                        <input type="email" id="loginEmail" required class="mt-1 w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:outline-none">
+                    </div>
+                    <div>
+                        <label for="loginPassword" class="block text-sm font-medium text-slate-600">Password</label>
+                        <input type="password" id="loginPassword" required class="mt-1 w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:outline-none">
+                    </div>
+                    <button type="submit" class="w-full px-4 py-3 rounded-lg bg-sky-500 text-white hover:bg-sky-600 transition-colors font-medium">Login</button>
+                </form>
+
+                <form id="signupForm" class="space-y-4 hidden">
+                    <div>
+                        <label for="signupEmail" class="block text-sm font-medium text-slate-600">Email</label>
+                        <input type="email" id="signupEmail" required class="mt-1 w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:outline-none">
+                    </div>
+                    <div>
+                        <label for="signupPassword" class="block text-sm font-medium text-slate-600">Password</label>
+                        <input type="password" id="signupPassword" minlength="6" required class="mt-1 w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:outline-none">
+                    </div>
+                     <div>
+                        <label for="signupConfirmPassword" class="block text-sm font-medium text-slate-600">Confirm Password</label>
+                        <input type="password" id="signupConfirmPassword" minlength="6" required class="mt-1 w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:outline-none">
+                    </div>
+                    <button type="submit" class="w-full px-4 py-3 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 transition-colors font-medium">Sign Up</button>
+                </form>
+            </div>
+
+            <p id="authToggleText" class="text-center text-sm text-slate-500 mt-6">
+                Don't have an account? <button id="toggleToSignupBtn" class="font-medium text-sky-600 hover:text-sky-700">Sign Up</button>
+            </p>
+            <p id="authErrorMessage" class="text-center text-sm text-red-500 mt-3 h-4"></p>
+        </div>
+    </div>
+
+    <div id="appWrapper" class="hidden flex flex-col flex-1 min-h-0">
+        <header id="topBar" class="bg-white h-14 flex items-center justify-between px-5 border-b border-slate-200 shadow-sm flex-shrink-0">
+            <div class="flex items-center">
+                <i class="ph ph-hexagon text-sky-500 text-3xl mr-2"></i>
+                <h1 class="text-xl font-semibold text-slate-700">Flux Scribe</h1>
+                <span id="currentNotebookNameTopBar" class="ml-4 text-sm text-slate-500 border-l border-slate-300 pl-4">No Notebook Selected</span>
+            </div>
+            <div class="flex items-center space-x-3">
+                <span id="currentUserDisplay" class="text-xs text-slate-500"></span>
+                <button id="settingsButton" title="Settings" class="p-2 rounded-full hover:bg-slate-200/70 transition-colors text-slate-500 hover:text-sky-600">
+                    <i class="ph ph-gear text-xl"></i>
+                </button>
+                <button id="logoutButton" title="Logout" class="p-2 rounded-full hover:bg-red-100 transition-colors text-slate-500 hover:text-red-600">
+                    <i class="ph ph-sign-out text-xl"></i>
+                </button>
+            </div>
+        </header>
+
+        <div id="appContainer" class="flex flex-1 min-h-0">
+            <aside id="leftSidebar" class="w-[300px] bg-slate-100/80 backdrop-blur-md p-5 flex flex-col border-r border-slate-200/70 flex-shrink-0 overflow-y-auto custom-scrollbar">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="text-base font-semibold uppercase text-slate-600 tracking-wider">Notebooks</h2>
+                    <button id="addNotebookBtn" class="p-1.5 rounded-md hover:bg-sky-200/70 text-sky-600 hover:text-sky-700 transition-colors" title="New Notebook">
+                        <i class="ph ph-plus-circle text-lg"></i>
+                    </button>
+                </div>
+                <div id="notebooksList" class="space-y-1 mb-4"></div>
+
+                <div id="activeNotebookDetails" class="hidden flex-1 flex-col min-h-0 space-y-4 pt-3 border-t border-slate-300/70">
+                    <div>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <h3 class="text-sm font-medium uppercase text-slate-500 tracking-wider">Sources</h3>
+                            <button id="addSourceBtnSidebar" title="Add Source" class="p-1.5 rounded-md hover:bg-sky-200/70 text-sky-600 hover:text-sky-700 transition-colors"><i class="ph ph-plus text-md"></i></button>
+                        </div>
+                        <div id="sourcesListSidebar" class="space-y-1.5 max-h-40 overflow-y-auto custom-scrollbar pr-1"></div>
+                    </div>
+                    <div class="flex-1 flex flex-col min-h-0">
+                        <div class="flex justify-between items-center mb-1.5">
+                            <h3 class="text-sm font-medium uppercase text-slate-500 tracking-wider">Notes</h3>
+                            <button id="addNoteBtnSidebar" class="p-1.5 rounded-md hover:bg-sky-200/70 text-sky-600 hover:text-sky-700 transition-colors" title="New Note"><i class="ph ph-note-pencil text-md"></i></button>
+                        </div>
+                        <div class="mb-2 relative">
+                            <input type="text" id="searchNotesInput" placeholder="Search notes..." class="w-full p-1.5 pl-7 text-xs border border-slate-300 rounded-md focus:ring-1 focus:ring-sky-400 focus:outline-none focus:border-sky-400 transition-shadow">
+                            <i class="ph ph-magnifying-glass absolute left-1.5 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm"></i>
+                        </div>
+                        <div id="notesListSidebar" class="flex-1 overflow-y-auto space-y-1 custom-scrollbar pr-1"></div>
+                    </div>
+                </div>
+            </aside>
+
+            <main id="mainContentArea" class="flex-1 p-6 md:p-8 flex flex-col bg-white shadow-inner-lg overflow-y-auto">
+                <div id="welcomeScreen" class="flex-1 flex flex-col items-center justify-center text-center">
+                    <i class="ph ph-books text-7xl text-slate-300 mb-5"></i>
+                    <h2 class="text-2xl font-semibold text-slate-600">Welcome to Flux Scribe</h2>
+                    <p class="text-slate-500 mt-2 max-w-md">Select or create a notebook to begin.</p>
+                </div>
+                <div id="notebookOverviewScreen" class="hidden flex-1 flex-col items-center justify-center text-center">
+                    <i class="ph ph-notebook text-7xl text-slate-300 mb-5"></i>
+                    <h2 id="notebookOverviewTitle" class="text-2xl font-semibold text-slate-600">Notebook Title</h2>
+                    <p id="notebookOverviewStats" class="text-slate-500 mt-2">X sources, Y notes.</p>
+                    <p class="text-slate-500 mt-1">Add sources or create notes using the sidebar.</p>
+                    <button id="createNewNoteFromOverviewBtn" class="mt-6 px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors flex items-center text-sm"><i class="ph ph-note-pencil mr-2"></i> Create New Note</button>
+                </div>
+                <div id="noteEditorScreen" class="hidden flex-1 flex-col">
+                    <div class="flex items-center justify-between mb-4">
+                        <input type="text" id="noteTitleInput" placeholder="Note Title" class="text-2xl font-semibold w-full p-2 rounded-lg focus:ring-2 focus:ring-sky-300 focus:outline-none border border-transparent focus:border-sky-300 transition-shadow">
+                        <div class="flex space-x-2 ml-4 flex-shrink-0">
+                             <button id="saveNoteBtn" class="p-2 rounded-lg bg-sky-500 text-white hover:bg-sky-600 transition-colors flex items-center text-sm" title="Save Note"><i class="ph ph-floppy-disk mr-1.5"></i> Save</button>
+                            <button id="deleteNoteBtn" class="p-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors text-sm" title="Delete Note"><i class="ph ph-trash"></i></button>
+                        </div>
+                    </div>
+                    <textarea id="noteContentInput" placeholder="Start writing..." class="flex-1 w-full p-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-sky-300 focus:outline-none focus:border-sky-300 resize-none custom-scrollbar" spellcheck="false"></textarea>
+                    <div class="text-xs text-slate-400 mt-2 text-right" id="noteTimestamp"></div>
+                </div>
+            </main>
+
+            <aside id="aiHelperPanel" class="w-[320px] bg-slate-50 shadow-lg p-5 flex flex-col border-l border-slate-200/70 flex-shrink-0">
+                <h2 class="text-lg font-semibold text-sky-600 mb-4 pb-2 border-b border-slate-200">AI Assistant</h2>
+                <div id="aiMessageDisplay" class="flex-1 space-y-3 overflow-y-auto mb-4 p-2 bg-white rounded-lg border border-slate-200 custom-scrollbar min-h-[100px]">
+                    <div class="ai-message ai-message-bot"><p class="text-xs text-slate-500 mb-0.5">Flux AI</p><div class="p-2.5 bg-sky-100 rounded-lg text-sm text-slate-700 inline-block max-w-xs">Hello! How can I help?</div></div>
+                </div>
+                <div class="mt-auto">
+                    <div id="aiSuggestedQuestions" class="mb-3 space-y-1.5">
+                         <button class="ai-suggestion-btn">Summarize selected sources</button>
+                         <button class="ai-suggestion-btn">Key themes in this notebook?</button>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <input type="text" id="aiChatInput" placeholder="Ask something..." class="flex-1 p-2.5 border border-slate-300 rounded-lg focus:ring-1 focus:ring-sky-400 focus:outline-none text-sm">
+                        <button id="aiSendBtn" class="p-2.5 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors"><i class="ph ph-paper-plane-tilt text-lg"></i></button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div id="notebookModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-[60] hidden animate-fade-in">
+        <div class="bg-white p-6 rounded-xl shadow-2xl w-full max-w-md transform animate-scale-up">
+            <h3 id="notebookModalTitle" class="text-xl font-semibold mb-4 text-slate-700">Create New Notebook</h3>
+            <input type="text" id="notebookNameInput" placeholder="Notebook Name" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:outline-none mb-4">
+            <div class="flex justify-end space-x-3">
+                <button id="cancelNotebookModalBtn" class="px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors">Cancel</button>
+                <button id="confirmNotebookModalBtn" class="px-4 py-2 rounded-lg bg-sky-500 text-white hover:bg-sky-600 transition-colors">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-[60] hidden animate-fade-in">
+        <div class="bg-white p-6 rounded-xl shadow-2xl w-full max-w-md transform animate-scale-up">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-semibold text-slate-700">Settings</h3>
+                <button id="closeSettingsModalBtn" class="p-1.5 rounded-full hover:bg-slate-200 transition-colors text-slate-500 hover:text-slate-700"><i class="ph ph-x text-xl"></i></button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <h4 class="text-md font-medium text-slate-600 mb-2">Data Management</h4>
+                    <button id="clearAllDataBtn" class="w-full px-4 py-2.5 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors flex items-center justify-center text-sm"><i class="ph ph-warning-octagon mr-2 text-base"></i> Clear All Account Data</button>
+                    <p class="text-xs text-slate-500 mt-1.5">This will permanently delete all your notebooks, notes, and sources from Firebase. This action cannot be undone.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="addSourceModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-[60] hidden animate-fade-in">
+        <div class="bg-white p-6 rounded-xl shadow-2xl w-full max-w-lg transform animate-scale-up">
+            <h3 class="text-xl font-semibold mb-4 text-slate-700">Add New Source</h3>
+            <div class="space-y-4">
+                <div><label for="sourceNameInput" class="block text-sm font-medium text-slate-600 mb-1">Source Name</label><input type="text" id="sourceNameInput" placeholder="e.g., Research Paper on AI" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:outline-none"></div>
+                <div><label for="sourceUrlInput" class="block text-sm font-medium text-slate-600 mb-1">Source URL (Optional)</label><input type="url" id="sourceUrlInput" placeholder="https://example.com/document.pdf" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:outline-none"></div>
+                <div><label for="sourceContentInput" class="block text-sm font-medium text-slate-600 mb-1">Or Paste Content (Optional)</label><textarea id="sourceContentInput" rows="4" placeholder="Paste text content here..." class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:outline-none custom-scrollbar"></textarea></div>
+                <p class="text-xs text-slate-500">Note: Actual file uploading/processing is not supported. This saves metadata.</p>
+            </div>
+            <div class="flex justify-end space-x-3 mt-6">
+                <button id="cancelAddSourceBtn" class="px-4 py-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors">Cancel</button>
+                <button id="confirmAddSourceBtn" class="px-4 py-2 rounded-lg bg-sky-500 text-white hover:bg-sky-600 transition-colors">Add Source</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="customContextMenu" class="hidden fixed bg-white shadow-xl rounded-lg p-2 z-[70] border border-slate-200 text-sm min-w-[180px]"></div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
